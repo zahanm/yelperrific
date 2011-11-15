@@ -3,10 +3,11 @@ from __future__ import print_function
 
 import sys
 import json
+import gzip
 from random import random
 
-LARGER_FILE = 'data/larger.json'
-SMALLER_FILE = 'data/smaller.json'
+LARGER_FILE = 'data/larger.json.gz'
+SMALLER_FILE = 'data/smaller.json.gz'
 
 class Divider:
 
@@ -17,7 +18,7 @@ class Divider:
     self.sm_users_ids = set()
 
   def reviews_pass(self):
-    with open(self.input_file) as inp, open(LARGER_FILE, 'w') as larger, open(SMALLER_FILE, 'w') as smaller:
+    with gzip.open(self.input_file) as inp, gzip.open(LARGER_FILE, 'w') as larger, gzip.open(SMALLER_FILE, 'w') as smaller:
       for line in inp:
         obj = json.loads(line)
         out = larger
@@ -31,7 +32,7 @@ class Divider:
     print('Done isolating smaller set')
 
   def pull_in_related(self):
-    with open(self.input_file) as inp, open(SMALLER_FILE, 'a') as smaller:
+    with gzip.open(self.input_file) as inp, gzip.open(SMALLER_FILE, 'a') as smaller:
       for line in inp:
         obj = json.loads(line)
         if obj['type'] == 'business' and obj['business_id'] in self.sm_bus_ids:
