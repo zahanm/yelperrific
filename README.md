@@ -1,7 +1,7 @@
 ## Yelperrific
 
 CS 224W project at Stanford, to provide yelp recommendations.
-Uses the Yelp! academic dataset
+Uses the Yelp! academic dataset.
 
 Authors:
 
