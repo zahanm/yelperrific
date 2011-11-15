@@ -28,6 +28,7 @@ class Divider:
             self.sm_users_ids.add(obj['user_id'])
         json.dump(obj, out)
         out.write('\n')
+    print('Done isolating smaller set')
 
   def pull_in_related(self):
     with open(self.input_file) as inp, open(SMALLER_FILE, 'a') as smaller:
@@ -41,9 +42,9 @@ class Divider:
           smaller.write('\n')
 
   def run(self):
-    reviews_pass()
-    pull_in_related()
-  
+    self.reviews_pass()
+    self.pull_in_related()
+
   def __str__(self):
     return 'Divider <' + str(self.input_file) + ', ' + str(self.prob) + '>'
 
@@ -56,5 +57,4 @@ if __name__ == '__main__':
     if len(sys.argv) == 3:
       prob = sys.argv[2]
     d = Divider(input_file, prob)
-    print(d)
     d.run()
