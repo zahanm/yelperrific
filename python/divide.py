@@ -56,6 +56,6 @@ if __name__ == '__main__':
     input_file = sys.argv[1]
     prob = 0.1
     if len(sys.argv) == 3:
-      prob = sys.argv[2]
+      prob = float(sys.argv[2])
     d = Divider(input_file, prob)
     d.run()
