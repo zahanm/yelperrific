@@ -1,18 +1,18 @@
 from mrjob.job import MRJob
 
 """
-Creates a histogram of user review counts
+Outputs user id -> review count
 """
 
 class UserDegreeHist(MRJob):
     DEFAULT_INPUT_PROTOCOL = 'json_value'
 
     def mapper(self, _, data):
-        if data['type'] == 'user':
-            yield (data['review_count'], 1)
+        if data['type'] == 'review':
+            yield (data['user_id'], 1)
 
-    def reducer(self, review_count, values):
-        yield (review_count, sum(values))
+    def reducer(self, u_id, values):
+        yield (u_id, sum(values))
 
 if __name__ == '__main__':
     UserDegreeHist().run()

@@ -2,28 +2,34 @@
 clear all; close all; clc;
 
 %% User plot
-u_data = dlmread('../data/user_degree.txt');
-[u_keys, idx] = sort(u_data(:,1));
-u_values = u_data(idx,2);
+u_degrees = dlmread('../data/u_degree.out', '\t', 0, 1);
+u_edges = sort(unique(u_degrees));
+u_hist = hist(u_degrees, u_edges);
 
 figure;
-loglog(u_keys, u_values);
+loglog(u_edges, u_hist);
 title('Distribution of user review counts');
 xlabel('Review count');
 ylabel('Number of users');
 hold off;
 
 %% Business plot
-b_data = dlmread('../data/business_degree.txt');
-[b_keys, idx] = sort(b_data(:,1));
-b_values = b_data(idx, 2);
+
+b_degrees = dlmread('../data/b_degree.out', '\t', 0, 1);
+b_edges = sort(unique(b_degrees));
+b_hist = hist(b_degrees, b_edges);
 
 figure;
-loglog(b_keys, b_values);
+loglog(b_edges, b_hist);
 title('Distribution of busines review counts');
 xlabel('Review count');
 ylabel('Number of businesses');
 
 %% Get mean of datasets
-user_mean = (u_keys' * u_values) / sum(u_values)
-business_mean = (b_keys' * b_values) / sum(b_values)
+user_mean = mean(u_degrees)
+user_med = median(u_degrees)
+user_std = std(u_degrees)
+
+business_mean = mean(b_degrees)
+business_med = median(b_degrees)
+business_std = std(b_degrees)

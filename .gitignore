@@ -4,3 +4,8 @@
 .DS_Store
 
 *.pyc
+*.eps
+*.aux
+*.log
+
+examples/
