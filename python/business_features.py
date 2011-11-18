@@ -1,6 +1,8 @@
 
 from mrjob.job import MRJob
 
+EMIT_TYPES = frozenset('review', 'business')
+
 class BusinessFeatures(MRJob):
   '''
   Calculates a feature vector for each business from the reviews corresponding
@@ -9,10 +11,8 @@ class BusinessFeatures(MRJob):
 
   DEFAULT_INPUT_PROTOCOL = 'json_value'
 
-  emit_types = frozenset('review', 'business')
-
   def mapper(self, _, data):
-    if data['type'] in emit_types:
+    if data['type'] in EMIT_TYPES:
       yield data['business_id'], data
   
   def reducer(self, business_id, data_blobs):
