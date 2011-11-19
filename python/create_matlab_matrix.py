@@ -40,6 +40,7 @@ if __name__ == '__main__':
     test_data = '../data/official-test.json.gz'
 
     m = MatrixCreator(all_data)
+    m.createMatrix(all_data, 'official_all.txt')
     m.createMatrix(train_data, 'official_train.txt')
     m.createMatrix(test_data, 'official_test.txt')
     
