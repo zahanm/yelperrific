@@ -1,6 +1,6 @@
 clear all; close all;
 
-k = 25;
+k = 100;
 
 train_data = dlmread('../data/official_all.txt');
 train_matrix = sparse(train_data(:, 1), train_data(:, 2), train_data(:, 3));
