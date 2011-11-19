@@ -1,6 +1,6 @@
 clear all; close all;
 
-k = 50;
+k = 25;
 
 train_data = dlmread('../data/official_all.txt');
 train_matrix = sparse(train_data(:, 1), train_data(:, 2), train_data(:, 3));
@@ -26,7 +26,6 @@ for i = 1:num_test
     gold_rating = test_data(i, 3);
     
     % remove the rating we want to predict from the matrix
-    assert(train_matrix(b_id, u_id) == gold_rating);
     train_matrix(b_id, u_id) = 0;
     
     % Calculate cosine similarity
@@ -44,11 +43,13 @@ for i = 1:num_test
     % choose the top k most similar
     neighbor_ids = sorted_ids(1:k);
     
-    % pick only neighbors with rating for the business we want
+    
+    % pick only neighbors with ratings for the business we want
     neighbor_ratings = full(train_matrix(b_id, neighbor_ids));
     neighbor_ratings(neighbor_ratings == 0) = [];
 
     if isempty(neighbor_ratings)
+        % default -- predict mode
         predicted_ratings(i) = 4;
     else
         predicted_ratings(i) = mean(neighbor_ratings);
@@ -58,6 +59,6 @@ for i = 1:num_test
     train_matrix(b_id, u_id) = gold_rating;
 end
 
-rmse = sqrt(mean(predicted_ratings(1:num_test) - actual_ratings(1:num_test)).^2)
-baseline3 = sqrt(mean(3 - actual_ratings).^2)
-baseline4 = sqrt(mean(4 - actual_ratings).^2)
+rmse = sqrt(mean((predicted_ratings - actual_ratings).^2))
+baseline3 = sqrt(mean((3 - actual_ratings).^2))
+baseline4 = sqrt(mean((4 - actual_ratings).^2))
