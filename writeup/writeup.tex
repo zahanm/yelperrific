@@ -94,11 +94,27 @@ evaluated using average root mean square error (RMSE) over the test set.
 In our first model, we use a neighborhood-based collaborative filtering method 
 described as follows:
 \begin{itemize}
-\item Steps from project proposal go here. 
+\item For a given user $i$, calculate similarity between this users and all other
+users. To compute similarity, we represent the dataset as a sparse matrix
+of businesses and users, with values in the matrix being the ratings
+assigned by the users to the businesses. We then take the cosine similarity
+between the vectors of two users.
+\item Select the k nearest neighbors of i based on this similarity measure
+\item Compute a predicted rating for i based on a weighted combination of the
+  nearest ratings neighbors
 \end{itemize}
 
-Mention that we use cosine similarity and because over half the users will have 
-no basis for prediction, we predict ``4'' for them.
+We used leave-1-out for our testing, training on all examples but the one
+we tested on. With our first implementation of the model, we discovered a severe
+limitation with our dataset - with the median number of ratings per user
+being 1, more than half the users would not have another rating once we
+removed the one for testing. 
+
+To account for this, we predicted the rating for these users to be 4,
+given that 4 was the median star rating in our dataset. We compare to a
+baseline where 4 is predicted as the value for every star rating, and find
+that our model significantly improves the root-mean-square error, as shown
+in Table \ref{ncf}.
 
 \begin{table}[htb]
 \centering
@@ -113,6 +129,44 @@ Baseline (predict 4) &0.3454
 \caption{ Model Performance }
 \label{ncf}
 \end{table}
+
+\section{Item-based Collaborative Filtering}
+We attempted an implementation of item-based collaborative
+filtering. However, this is probably not an ideal method for our
+dataset. It is rendered useless when a user has a single review, and is
+almost futile when a user has fewer than k reviews, as in that case, we
+would simply be using as our prediction the average of the ratings
+provided by the user to all the businesses he has rated.
+
+For our final work, we may choose to either dismiss this model completely,
+given its unsuitability for the limited dataset, test these algorithms on
+an alternative dataset, or create a hybrid approach to account for the
+sparsity of the data.
+
+\section{Future Work}
+
+For our final version, we intend to implement a version of Model-based
+collaborative filtering, the final model of the three we had suggested
+originally. In addition, we intend to rerun some of the models we have
+already worked on with normalization and tweaks to account for data
+sparsity. For instance, in our version of neighborhood-based collaborative
+filtering, we do not account for the number of common businesses reviewed
+by two users when computing our metrics. As a result, two users who have a
+single restaurant in common and rated it the same will be considered more
+similar than two users who have 5 restaurants in common, rate 4 the same
+and differ by a score of 1 point on the fifth. As our cosine similarity
+metric does not use a pure product of vector magnitudes in its denominator
+(to prevent heavy biases against people with several reviews), we need to
+find a way to account for this opposite effect, where a pair of users with
+only a single intersecting business are viewed as more similar than those
+with many intersecting businesses.
+
+Finally, if time permits, we intend to move our methods onto a different
+data set. With the two methods we have implemented so far, we have seen
+that the sparsity of our current dataset puts us at a large disadvantage
+and produces poor results. Thus, it would be interesting to compare the
+performances of these techniques on a dataset which contains more edges
+between the various nodes.
 
 
 \end{document}
