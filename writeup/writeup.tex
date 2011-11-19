@@ -132,11 +132,28 @@ Baseline (predict 4) &0.3454
 
 \section{Item-based Collaborative Filtering}
 We attempted an implementation of item-based collaborative
-filtering. However, this is probably not an ideal method for our
-dataset. It is rendered useless when a user has a single review, and is
+filtering, based on the following steps:
+
+\begin{itemize}
+\item When considering the (user, business) pair, we calculate similarities
+  between the target business and each of the businesses the user has
+  rated previously
+\item We use the cosine similarity metrics, and
+  use all of the ratings for a particular business over the user space as
+  a feature vector.
+\item We find the k nearest neighbors to the target business from among
+  the set of businesses the user has rated previously
+\item Finally, we take a weighted average of the selected k businesses to
+  compute a prediction of the rating for the target business 
+\end{itemize}
+
+However, this is not an ideal method for our dataset given its
+sparsity. It is rendered useless when a user has a single review, and is
 almost futile when a user has fewer than k reviews, as in that case, we
 would simply be using as our prediction the average of the ratings
-provided by the user to all the businesses he has rated.
+given by the user to all other businesses he has rated. In our results,
+we found that the baseline of predicting the median 4 for all ratings
+performed better than this model with any setting of k. 
 
 For our final work, we may choose to either dismiss this model completely,
 given its unsuitability for the limited dataset, test these algorithms on
@@ -149,17 +166,20 @@ For our final version, we intend to implement a version of Model-based
 collaborative filtering, the final model of the three we had suggested
 originally. In addition, we intend to rerun some of the models we have
 already worked on with normalization and tweaks to account for data
-sparsity. For instance, in our version of neighborhood-based collaborative
+sparsity.
+
+For instance, in our version of neighborhood-based collaborative
 filtering, we do not account for the number of common businesses reviewed
 by two users when computing our metrics. As a result, two users who have a
 single restaurant in common and rated it the same will be considered more
 similar than two users who have 5 restaurants in common, rate 4 the same
-and differ by a score of 1 point on the fifth. As our cosine similarity
-metric does not use a pure product of vector magnitudes in its denominator
-(to prevent heavy biases against people with several reviews), we need to
-find a way to account for this opposite effect, where a pair of users with
-only a single intersecting business are viewed as more similar than those
-with many intersecting businesses.
+and differ by a score of 1 point on the fifth. As the cosine similarity
+metric uses a pure product of vector magnitudes in its denominator, we get
+heavy biases against people who have a lot of reviews. We need to
+find a way to account for this effect, while preventing the occurrence of
+the opposite effect in which a pair of users with only a single
+intersecting business are viewed as more similar than those with many
+intersecting businesses.
 
 Finally, if time permits, we intend to move our methods onto a different
 data set. With the two methods we have implemented so far, we have seen
