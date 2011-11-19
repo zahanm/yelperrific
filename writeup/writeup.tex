@@ -94,27 +94,24 @@ evaluated using average root mean square error (RMSE) over the test set.
 In our first model, we use a neighborhood-based collaborative filtering method 
 described as follows:
 \begin{itemize}
-\item For a given user $i$, calculate similarity between this users and all other
+\item For a given user $i$, calculate similarity between this user and all other
 users. To compute similarity, we represent the dataset as a sparse matrix
 of businesses and users, with values in the matrix being the ratings
 assigned by the users to the businesses. We then take the cosine similarity
 between the vectors of two users.
-\item Select the k nearest neighbors of i based on this similarity measure
+\item Select the $k$ nearest neighbors of i based on this similarity measure
 \item Compute a predicted rating for i based on a weighted combination of the
   nearest ratings neighbors
 \end{itemize}
 
-We used leave-1-out for our testing, training on all examples but the one
-we tested on. With our first implementation of the model, we discovered a severe
+In our implementation of the model, we discovered a severe
 limitation with our dataset - with the median number of ratings per user
 being 1, more than half the users would not have another rating once we
-removed the one for testing. 
-
-To account for this, we predicted the rating for these users to be 4,
-given that 4 was the median star rating in our dataset. We compare to a
-baseline where 4 is predicted as the value for every star rating, and find
-that our model significantly improves the root-mean-square error, as shown
-in Table \ref{ncf}.
+excluded the one we were trying to predict. Another problem was that even if we 
+find a group of $k$ nearest neighbors, it's 
+likely in a sparse dataset like this that none of those neighbors will have 
+given a rating to the business of interest. In these cases of zero available data, we simply predict the rating to be the 
+most common value in the dataset, 4. 
 
 \begin{table}[htb]
 \centering
@@ -125,17 +122,34 @@ in Table \ref{ncf}.
 3 neighbors &1.2596 \tabularnewline
 5 neighbors &1.2619 \tabularnewline
 10 neighbors &1.2650 \tabularnewline
-25 neighbors &1.2709 \tabularnewline
-50 neighbors & \tabularnewline
-100 neighbors & \tabularnewline
-everything &1.0891 \tabularnewline
-Baseline (predict 4) &1.2549
+50 neighbors &1.2758 \tabularnewline
+100 neighbors &1.2733 \tabularnewline
+1000 neighbors &1.1973 \tabularnewline
+\hline
+All other users &1.0891 \tabularnewline
+Always predict 4 &1.2549
 \tabularnewline \hline
 
 \end{tabular}
-\caption{ Model Performance }
+\caption{ Neighborhood-based CF Model Performance }
 \label{ncf}
 \end{table}
+
+Table \ref{ncf} shows the RMSE of the neighborhood model at several values 
+of ~$k$. Also shown are the results when taking the average rating over all 
+other users who've rated this business, and when we predict ``4'' for every 
+test item. These results show that the neighborhood model performs quite 
+poorly. The error values are higher than the baseline ``predict-4'' model 
+until $k$ increases to 1000 neighbors. As $k$ increases, the model approaches 
+the case where we include all other users, which scores the best on RMSE. This 
+shows that taking the most similar users as measured by cosine similarity does 
+not at any value to the model. This problem may be attributed to a number of 
+possible causes, including a weak model, sparse data, and a poor definition of 
+similarity. In the upcoming weeks, we plan to investigate these problems more 
+and choose a better model.
+
+
+
 
 \section{Item-based Collaborative Filtering}
 We attempted an implementation of item-based collaborative
